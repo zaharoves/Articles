@@ -1,0 +1,64 @@
+----------------------------1---------------------------------------------------------------------
+
+CREATE PROC AddComment
+    	@ArticleId int,   
+    	@ParentCommentId int,
+	@UserId int,
+	@Text text
+	
+AS   
+    INSERT INTO [ArticlesDB].[dbo].[Comment] 
+  ([Text], [Article], [User], [Parent]) VALUES 
+  (@Text, @ArticleId, @UserId, @ParentCommentId)
+
+--------------------------------------------------------------------------------------------------
+----------------------------2---------------------------------------------------------------------
+
+CREATE PROC GetAllArticles
+AS 
+	SELECT *
+	FROM Article
+
+--------------------------------------------------------------------------------------------------
+----------------------------3---------------------------------------------------------------------
+
+CREATE PROC GetAllUsers
+AS   
+    SELECT * FROM [User]
+
+--------------------------------------------------------------------------------------------------
+----------------------------4---------------------------------------------------------------------
+
+CREATE PROC GetArticleById
+    	@ArticleId int 
+AS   
+	SELECT *
+	FROM [ArticlesDB].[dbo].[Article] 
+	WHERE [Id] = @ArticleId
+
+--------------------------------------------------------------------------------------------------
+----------------------------5---------------------------------------------------------------------
+
+CREATE PROC GetChildComments
+	@ArticleId int,
+	@CommentId int
+AS 
+	SELECT c.[Id], c.[Text], c.[Article], c.[User] AS UserId, c.[Parent], u.[Name] AS UserName
+	FROM Comment AS c
+	INNER JOIN [ArticlesDB].[dbo].[User] AS u
+	ON c.[User] = u.[Id]
+	WHERE c.[Article] = @ArticleId AND c.[Parent] = @CommentId
+
+--------------------------------------------------------------------------------------------------
+----------------------------6---------------------------------------------------------------------
+
+CREATE PROC GetCommentsByArticleId
+	@ArticleId int
+AS 
+	SELECT c.[Id], c.[Text], c.[Article], c.[User] AS UserId, c.[Parent], u.[Name] AS UserName
+	FROM Comment as c
+	INNER JOIN [ArticlesDB].[dbo].[User] AS u
+	ON c.[User] = u.[Id]
+	WHERE c.[Article] = @ArticleId AND c.[Parent] IS NULL
+
+--------------------------------------------------------------------------------------------------
